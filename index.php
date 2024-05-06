@@ -37,6 +37,9 @@
         ],
 
     ];
+
+    $selected_parking = $_GET['select_parking'];
+    $selected_vote = $_GET['vote'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,11 +51,37 @@
 </head>
 <body>
     <main>
-        <div class="table_container">
-            <table class="table border m-3">
+
+        <div class="container">
+            <!-- form -->
+            <div class="flex">
+                <form action="" method="GET">
+                    <select class="form-select" aria-label="Default select example" name="select_parking">
+                        <option selected value="default">Parcheggio</option>
+                        <option value="1">sì</option>
+                        <option value="0">no</option>
+                    </select>
+
+                    <select class="form-select" aria-label="Default select example" name="vote">
+                        <option selected value="default">Stelle</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+
+                    </select>
+
+                    <button type="submit">cerca</button>
+                </form>
+
+                
+            </div>
+
+            <!-- table -->
+            <table class="table border">
                 <thead>
                     <tr>
-                        <th scope="col">#</th>
                         <th scope="col">Nome</th>
                         <th scope="col">Descrizione</th>
                         <th scope="col">parcheggio</th>
@@ -61,36 +90,53 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <?php
-                        for ($i = 0; $i < count($hotels); $i++) {
-                            $hotel = $hotels[$i];
-                            $table_index = $i + 1;
-                            $hotel_name = $hotel['name'];
-                            $hotel_description = $hotel['description'];
-                            $hotel_parking = $hotel['parking'];
+                    <?php        
+                        //controllo se sono stati selezionate le opzioni
+                        if ($selected_vote !== "default" && $selected_parking !== "default") {
 
-                            if ($hotel_parking){
-                                $hotel_parking = 'sì';
-                            } else {
-                                $hotel_parking = 'no';
+                            for ($i = 0; $i < count($hotels); $i++ ) {
+                                $hotel = $hotels[$i];
+                                // $table_index = $i + 1;
+                                $hotel_name = $hotel['name'];
+                                $hotel_description = $hotel['description'];
+                                $hotel_parking = $hotel['parking'] ? 'sì' : 'no';
+                                $hotel_vote = $hotel['vote'];
+                                $hotel_distance = $hotel['distance_to_center'];
+    
+                                //stampo gli hotel in base ai parcheggi e alle stelle
+                                if ((($selected_parking == 1 && $hotel['parking']) || ($selected_parking == 0 && !$hotel['parking'])) && $hotel_vote == $selected_vote) {
+                                    echo "     
+                                        <tr>
+                                            <td>$hotel_name</td>
+                                            <td>$hotel_description</td>
+                                            <td>$hotel_parking</td>
+                                            <td>$hotel_vote</td>
+                                            <td>$hotel_distance</td>
+                                        </tr>
+                                    ";
+                                } 
                             };
-
-                            $hotel_vote = $hotel['vote'];
-                            $hotel_distance = $hotel['distance_to_center'];
-                            
-                            echo "     
-
-                            <tr>
-                                <th scope=\"row\">$table_index</th>
-                                <td>$hotel_name</td>
-                                <td>$hotel_description</td>
-                                <td>$hotel_parking</td>
-                                <td>$hotel_vote</td>
-                                <td>$hotel_distance</td>
-                            </tr>
-
-                            ";
-                        };
+                        } else {
+                            for ($i = 0; $i < count($hotels); $i++ ) {
+                                $hotel = $hotels[$i];
+                                $table_index = $i + 1;
+                                $hotel_name = $hotel['name'];
+                                $hotel_description = $hotel['description'];
+                                $hotel_parking = $hotel['parking'] ? 'sì' : 'no';
+                                $hotel_vote = $hotel['vote'];
+                                $hotel_distance = $hotel['distance_to_center'];
+    
+                                echo "     
+                                    <tr>
+                                        <td>$hotel_name</td>
+                                        <td>$hotel_description</td>
+                                        <td>$hotel_parking</td>
+                                        <td>$hotel_vote</td>
+                                        <td>$hotel_distance</td>
+                                    </tr>
+                                    ";
+                            };
+                        }
                     ?>
                 </tbody>
             </table>
@@ -103,8 +149,8 @@
 </html>
 
 <style>
-    .table_container{
+    /* .table_container{
         margin: 0 auto;
         max-width: 1200px
-    }
+    } */
 </style>
